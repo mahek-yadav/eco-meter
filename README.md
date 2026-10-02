@@ -250,249 +250,366 @@ eco-meter/
 ├── .gitignore
 └── README.md
 
-⚙️ Prerequisites
-Before running the project locally, install:
-Node.js
-npm
-MongoDB Atlas account
-Firebase project
-Git
-🚀 Installation and Setup
-Step 1: Clone the Repository
-git clone https://github.com/mahek-yadav/eco-meter.git
-Move into the project:
-cd eco-meter
-🔧 Backend Setup
-Step 2: Open the Backend Folder
-cd backend
-Install the backend dependencies:
+
+# EcoMeter Backend 
+
+Backend project for Case Study 45 using:
+
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- JWT authentication
+- Firebase Authentication / Firebase Admin SDK
+- Socket.io
+- Firebase Cloud Messaging
+- Modular routes, controllers, models and middleware
+
+## 1. Prerequisites
+
+Install:
+
+1. Node.js 18+
+2. MongoDB Community Server OR a MongoDB Atlas account
+3. VS Code
+4. Postman
+5. A Firebase project (needed for Firebase features)
+
+Check Node:
+
+```bash
+node -v
+npm -v
+```
+
+## 2. Install dependencies
+
+Inside the project folder:
+
+```bash
 npm install
-Step 3: Configure Backend Environment Variables
-Create a file named:
-.env
-inside the backend folder.
-Add:
+```
+
+## 3. Configure environment variables
+
+Copy `.env.example` to `.env`.
+
+Example:
+
+```env
 PORT=4000
+MONGO_URI=mongodb://127.0.0.1:27017/eco_meter
+JWT_SECRET=my_super_secret_key_123
+CLIENT_URL=http://localhost:4000
+FIREBASE_SERVICE_ACCOUNT_JSON=
+```
 
-MONGO_URI=your_mongodb_connection_string
+For MongoDB Atlas, replace `MONGO_URI` with the Atlas connection string.
 
-JWT_SECRET=your_jwt_secret
+## 4. Run the project
 
-CLIENT_URL=http://localhost:5173
+Development:
 
-FIREBASE_SERVICE_ACCOUNT_JSON=your_firebase_service_account_json
-Environment Variables
-Variable	Description
-PORT	Port used by the backend
-MONGO_URI	MongoDB Atlas connection string
-JWT_SECRET	Secret used for JWT authentication
-CLIENT_URL	Frontend URL used for CORS and Socket.IO
-FIREBASE_SERVICE_ACCOUNT_JSON	Firebase Admin service account configuration
-Do not commit the .env file to GitHub.
-▶️ Start the Backend
-From the backend folder:
-npm start
-For development:
+```bash
 npm run dev
-The backend will run at:
-http://localhost:4000
-🧪 Backend Health Check
+```
+
+Production:
+
+```bash
+npm start
+```
+
 Open:
-http://localhost:4000/api/health
-A successful response should look like:
+
+`http://localhost:4000`
+
+Health check:
+
+`http://localhost:4000/api/health`
+
+## 5. Authentication flow
+
+### Normal JWT
+
+1. POST `/api/auth/register`
+2. POST `/api/auth/login`
+3. Copy the returned JWT token.
+4. In Postman use:
+
+```text
+Authorization: Bearer YOUR_TOKEN
+```
+
+### Firebase Authentication
+
+Create a Firebase project and enable an authentication provider such as Email/Password.
+
+Generate a Firebase Admin service account from Firebase Console > Project settings > Service accounts.
+
+Put the service account JSON into `FIREBASE_SERVICE_ACCOUNT_JSON` as one line.
+
+The backend endpoint:
+
+`POST /api/auth/firebase-login`
+
+accepts:
+
+```json
 {
-  "status": "ok",
-  "database": "connected"
+  "idToken": "FIREBASE_ID_TOKEN"
 }
-The root endpoint can also be checked at:
-http://localhost:4000/
-💻 Frontend Setup
-Step 4: Open a New Terminal
-From the project root:
-cd frontend
-Install frontend dependencies:
+```
+
+The backend verifies the Firebase ID token and returns its own JWT.
+
+## 6. Main API endpoints
+
+### Auth
+
+- POST `/api/auth/register`
+- POST `/api/auth/login`
+- POST `/api/auth/firebase-login`
+
+### Readings
+
+- POST `/api/readings`
+- GET `/api/readings`
+- GET `/api/readings/device/:id`
+
+### Devices
+
+- GET `/api/devices`
+- GET `/api/devices/:id`
+- POST `/api/devices`
+- PUT `/api/devices/:id`
+- DELETE `/api/devices/:id`
+- POST `/api/devices/:id/control`
+
+### Bills
+
+- GET `/api/bills`
+- GET `/api/bills/predict`
+- GET `/api/bills/monthly`
+
+Optional query examples:
+
+`/api/bills/predict?days=30&ratePerKwh=8`
+
+`/api/bills/monthly?year=2026&month=9&ratePerKwh=8`
+
+### Tips
+
+- GET `/api/tips`
+- POST `/api/tips` (admin only)
+
+### Alerts
+
+- GET `/api/alerts`
+- POST `/api/alerts/check`
+
+### Notifications
+
+- POST `/api/notifications/send`
+
+Firebase Admin must be configured for this endpoint.
+
+## 7. Socket.io
+
+Socket.io uses the same server and port.
+
+Client example:
+
+```javascript
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:4000");
+
+socket.on("liveUsage", (data) => {
+  console.log("Live usage:", data);
+});
+
+socket.on("usageUpdate", (reading) => {
+  console.log("Usage update:", reading);
+});
+```
+
+For user-specific updates:
+
+```javascript
+socket.emit("joinUserRoom", "USER_ID");
+```
+
+When a reading is created, the server emits:
+
+- `usageUpdate`
+- `liveUsage`
+
+When a high-usage alert is created:
+
+- `usageAlert`
+
+When a device is controlled:
+
+- `deviceStatusUpdate`
+
+## 8. Testing order in Postman
+
+1. Register user.
+2. Login and copy token.
+3. Create device.
+4. Copy device `_id`.
+5. Create reading using that device ID.
+6. Get readings.
+7. Check readings by device.
+8. Predict bill.
+9. Get monthly bill.
+10. Get tips.
+11. If testing admin features, promote your test user to `admin` in MongoDB/Compass, then use the same JWT to add a tip.
+12. Check an alert using a reading ID.
+13. Test device control.
+14. Test notification after configuring Firebase.
+
+## 9. Example request bodies
+
+### Register
+
+```json
+{
+  "name": "Mahek",
+  "email": "mahek@example.com",
+  "password": "123456"
+}
+```
+
+### Create device
+
+```json
+{
+  "name": "Air Conditioner",
+  "type": "AC",
+  "room": "Bedroom",
+  "powerRatingWatts": 1500
+}
+```
+
+### Create reading
+
+```json
+{
+  "device": "DEVICE_ID",
+  "energyKwh": 2.5,
+  "voltage": 230,
+  "current": 6.5
+}
+```
+
+### Control device
+
+```json
+{
+  "status": "on"
+}
+```
+
+### Check alert
+
+```json
+{
+  "readingId": "READING_ID",
+  "thresholdKwh": 2
+}
+```
+
+### Create tip as admin
+
+```json
+{
+  "title": "Switch off unused appliances",
+  "description": "Turn off appliances when they are not being used.",
+  "category": "saving",
+  "estimatedSavingPercent": 10
+}
+```
+
+## 10. Project structure
+
+```text
+eco-meter/
+├── config/
+│   ├── db.js
+│   └── firebase.js
+├── controllers/
+│   ├── alertController.js
+│   ├── authController.js
+│   ├── billController.js
+│   ├── deviceController.js
+│   ├── notificationController.js
+│   ├── readingController.js
+│   └── tipController.js
+├── middleware/
+│   ├── authMiddleware.js
+│   └── validate.js
+├── models/
+│   ├── Alert.js
+│   ├── Device.js
+│   ├── Reading.js
+│   ├── Tip.js
+│   └── User.js
+├── routes/
+│   ├── alertRoutes.js
+│   ├── authRoutes.js
+│   ├── billRoutes.js
+│   ├── deviceRoutes.js
+│   ├── notificationRoutes.js
+│   ├── readingRoutes.js
+│   └── tipRoutes.js
+├── .env.example
+├── .gitignore
+├── package.json
+├── postman_collection.json
+├── README.md
+└── server.js
+```
+
+## 11. Deployment on Render
+
+1. Push the project to GitHub.
+2. Go to Render and create a new Web Service.
+3. Connect the GitHub repository.
+4. Build command:
+
+```bash
 npm install
-🔐 Frontend Environment Variables
-Create:
-.env
-inside the frontend folder.
-Add:
-VITE_API_URL=http://localhost:4000/api
+```
 
-VITE_SOCKET_URL=http://localhost:4000
+5. Start command:
 
-VITE_FIREBASE_API_KEY=your_firebase_api_key
-
-VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-
-VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
-
-VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-
-VITE_FIREBASE_APP_ID=your_firebase_app_id
-
-VITE_FIREBASE_VAPID_KEY=your_firebase_vapid_key
-These values should be obtained from the Firebase project configuration.
-▶️ Start the Frontend
-From the frontend folder:
-npm run dev
-The frontend will normally run at:
-http://localhost:5173
-🔗 Local Application
-Once both servers are running:
-Frontend:
-http://localhost:5173
-
-Backend:
-http://localhost:4000
-
-Backend Health:
-http://localhost:4000/api/health
-🔔 Firebase Notifications Setup
-EcoMeter uses Firebase Cloud Messaging for browser notifications.
-The frontend contains:
-frontend/public/firebase-messaging-sw.js
-The service worker handles background notifications.
-The browser must have notification permission enabled for push notifications to work.
-🌐 Production Deployment
-Frontend — Netlify
-The frontend is deployed on Netlify.
-Build Command
-npm run build
-Publish Directory
-dist
-Frontend Environment Variables
-The following variables must be configured in Netlify:
-VITE_API_URL
-VITE_SOCKET_URL
-VITE_FIREBASE_API_KEY
-VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_PROJECT_ID
-VITE_FIREBASE_STORAGE_BUCKET
-VITE_FIREBASE_MESSAGING_SENDER_ID
-VITE_FIREBASE_APP_ID
-VITE_FIREBASE_VAPID_KEY
-For production:
-VITE_API_URL=https://YOUR-RENDER-BACKEND-URL/api
-
-VITE_SOCKET_URL=https://YOUR-RENDER-BACKEND-URL
-🖥️ Backend — Render
-The backend is deployed on Render.
-Root Directory
-backend
-Build Command
-npm install
-Start Command
+```bash
 npm start
-Backend Environment Variables
-Configure the following variables in Render:
-PORT
-MONGO_URI
-JWT_SECRET
-CLIENT_URL
-FIREBASE_SERVICE_ACCOUNT_JSON
-For production:
-CLIENT_URL=https://YOUR-NETLIFY-FRONTEND-URL
-🗄️ Database
-EcoMeter uses MongoDB Atlas.
-The backend connects to MongoDB using:
-MONGO_URI
-The database stores information such as:
-Users
-Devices
-Energy readings
-Tips
-Alerts
-🔐 Security
-Sensitive configuration values are stored using environment variables.
-The following files should not be committed to GitHub:
-backend/.env
-frontend/.env
-The .gitignore file prevents these files and dependency folders from being uploaded.
-Sensitive backend credentials such as the Firebase Admin service account and MongoDB connection string must never be placed directly in the source code.
-📡 API Modules
-The backend provides REST API modules for:
-/api/auth
-/api/readings
-/api/devices
-/api/bills
-/api/tips
-/api/alerts
-/api/notifications
-The backend also provides:
-/api/health
-for checking server and database status.
-🔄 Real-Time Communication
-Socket.IO provides real-time communication between the frontend and backend.
-It is used for:
-Device status updates
-Real-time usage events
-Usage alerts
-Users do not need to refresh the page to see supported real-time changes.
-📊 Usage Analysis
-EcoMeter analyzes recent energy readings to calculate:
-Number of readings analyzed
-Average energy consumption
-Based on the recent average usage, personalized recommendations are generated.
-The recommendations are intended to help users reduce unnecessary electricity consumption.
-🧪 Testing the Application
-The following workflow can be used to test the application:
-Authentication
-Register a new user.
-Log in.
-Access the dashboard.
-Devices
-Create a device.
-Turn the device ON.
-Turn the device OFF.
-Open the application in another browser tab and verify real-time updates.
-Energy Usage
-Add an energy reading.
-Open the dashboard.
-Verify the usage statistics.
-Open the Tips page.
-Verify the usage analysis and personalized recommendations.
-Bills
-Set the electricity rate.
-Check the calculated electricity cost.
-Alerts
-Configure a usage threshold.
-Add a reading above the threshold.
-Verify that an alert is generated.
-Notifications
-Allow browser notifications.
-Register the browser for notifications.
-Send a test notification.
-Verify the browser notification.
-📌 Deployment URLs
-Update the following section after deployment:
-Frontend:
-YOUR_NETLIFY_URL
+```
 
-Backend:
-YOUR_RENDER_URL
+6. Add environment variables in Render:
+   - `MONGO_URI`
+   - `JWT_SECRET`
+   - `CLIENT_URL`
+   - `FIREBASE_SERVICE_ACCOUNT_JSON`
+   - `PORT` (Render can provide its own port; the code already uses `process.env.PORT`)
 
-Backend Health:
-YOUR_RENDER_URL/api/health
+7. Deploy.
+8. Test:
 
-GitHub:
-https://github.com/mahek-yadav/eco-meter
-👩‍💻 Author
-Mahek Yadav
-BTech CSE
-ITM Skills University
-📄 Project Type
-Academic Full-Stack Project
-📚 Summary
-EcoMeter combines a React frontend with a Node.js/Express backend, MongoDB database, Firebase services, and Socket.IO real-time communication to provide an energy monitoring and management platform.
-The project demonstrates:
-Full-stack web development
-REST API development
-Database integration
-Authentication
-Real-time communication
-Energy usage analysis
-Push notifications
-Cloud deployment
+```text
+https://YOUR-RENDER-URL.onrender.com/
+```
+
+and:
+
+```text
+https://YOUR-RENDER-URL.onrender.com/api/health
+```
+
+## 12. Important security note
+
+Do NOT upload `.env`, Firebase service-account JSON files, passwords, or secret keys to GitHub.
+
+The project includes `.gitignore` entries for these sensitive files.
