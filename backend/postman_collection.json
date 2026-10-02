@@ -1,0 +1,399 @@
+{
+  "info": {
+    "name": "EcoMeter Backend API",
+    "_postman_id": "ecometer-case-study-45",
+    "description": "Postman collection for Case Study 45 - Energy Usage Monitor",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "deviceId",
+      "value": ""
+    },
+    {
+      "key": "readingId",
+      "value": ""
+    },
+    {
+      "key": "firebaseIdToken",
+      "value": ""
+    },
+    {
+      "key": "fcmToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Mahek\", \"email\": \"mahek@example.com\", \"password\": \"123456\"}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"mahek@example.com\", \"password\": \"123456\"}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Firebase Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idToken\": \"{{firebaseIdToken}}\"}"
+            },
+            "url": "{{baseUrl}}/api/auth/firebase-login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Devices",
+      "item": [
+        {
+          "name": "Create Device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Air Conditioner\", \"type\": \"AC\", \"room\": \"Bedroom\", \"powerRatingWatts\": 1500}"
+            },
+            "url": "{{baseUrl}}/api/devices"
+          }
+        },
+        {
+          "name": "Get Devices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/devices"
+          }
+        },
+        {
+          "name": "Get Device",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/devices/{{deviceId}}"
+          }
+        },
+        {
+          "name": "Update Device",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"room\": \"Living Room\", \"powerRatingWatts\": 1600}"
+            },
+            "url": "{{baseUrl}}/api/devices/{{deviceId}}"
+          }
+        },
+        {
+          "name": "Control Device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"status\": \"on\"}"
+            },
+            "url": "{{baseUrl}}/api/devices/{{deviceId}}/control"
+          }
+        },
+        {
+          "name": "Delete Device",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/devices/{{deviceId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Readings",
+      "item": [
+        {
+          "name": "Create Reading",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"device\": \"{{deviceId}}\", \"energyKwh\": 2.5, \"voltage\": 230, \"current\": 6.5}"
+            },
+            "url": "{{baseUrl}}/api/readings"
+          }
+        },
+        {
+          "name": "Get Readings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/readings"
+          }
+        },
+        {
+          "name": "Get Readings By Device",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/readings/device/{{deviceId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bills",
+      "item": [
+        {
+          "name": "Get Bills",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/bills?ratePerKwh=8"
+          }
+        },
+        {
+          "name": "Predict Bill",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/bills/predict?days=30&ratePerKwh=8"
+          }
+        },
+        {
+          "name": "Monthly Bill",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/bills/monthly?year=2026&month=9&ratePerKwh=8"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tips",
+      "item": [
+        {
+          "name": "Get Tips",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/tips"
+          }
+        },
+        {
+          "name": "Create Tip (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"Switch off unused appliances\", \"description\": \"Turn off appliances when they are not being used.\", \"category\": \"saving\", \"estimatedSavingPercent\": 10}"
+            },
+            "url": "{{baseUrl}}/api/tips"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "Get Alerts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/alerts"
+          }
+        },
+        {
+          "name": "Check Alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"readingId\": \"{{readingId}}\", \"thresholdKwh\": 2}"
+            },
+            "url": "{{baseUrl}}/api/alerts/check"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Send FCM Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"token\": \"{{fcmToken}}\", \"title\": \"EcoMeter Alert\", \"body\": \"Your energy usage is above the selected threshold.\", \"data\": {\"type\": \"usage_alert\"}}"
+            },
+            "url": "{{baseUrl}}/api/notifications/send"
+          }
+        }
+      ]
+    }
+  ]
+}
