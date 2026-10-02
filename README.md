@@ -183,74 +183,6 @@ The system supports:
 
 ---
 
-# 📁 Project Structure
-
-```text
-eco-meter/
-│
-├── backend/
-│   │
-│   ├── config/
-│   │   ├── db.js
-│   │   └── firebase.js
-│   │
-│   ├── controllers/
-│   │   ├── alertController.js
-│   │   ├── authController.js
-│   │   ├── billController.js
-│   │   ├── deviceController.js
-│   │   ├── notificationController.js
-│   │   ├── readingController.js
-│   │   └── tipController.js
-│   │
-│   ├── middleware/
-│   │   ├── authMiddleware.js
-│   │   └── validate.js
-│   │
-│   ├── models/
-│   │   ├── Alert.js
-│   │   ├── Device.js
-│   │   ├── Reading.js
-│   │   ├── Tip.js
-│   │   └── User.js
-│   │
-│   ├── routes/
-│   │   ├── alertRoutes.js
-│   │   ├── authRoutes.js
-│   │   ├── billRoutes.js
-│   │   ├── deviceRoutes.js
-│   │   ├── notificationRoutes.js
-│   │   ├── readingRoutes.js
-│   │   └── tipRoutes.js
-│   │
-│   ├── package.json
-│   ├── server.js
-│   └── .env
-│
-├── frontend/
-│   │
-│   ├── public/
-│   │   ├── _redirects
-│   │   └── firebase-messaging-sw.js
-│   │
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── api.js
-│   │   ├── firebase.js
-│   │   ├── messaging.js
-│   │   ├── socket.js
-│   │   ├── index.css
-│   │   └── main.jsx
-│   │
-│   ├── package.json
-│   ├── index.html
-│   ├── netlify.toml
-│   └── .env
-│
-├── .gitignore
-└── README.md
-
-
 # EcoMeter Backend 
 
 Backend project for Case Study 45 using:
@@ -279,14 +211,6 @@ Check Node:
 ```bash
 node -v
 npm -v
-```
-
-## 2. Install dependencies
-
-Inside the project folder:
-
-```bash
-npm install
 ```
 
 ## 3. Configure environment variables
@@ -531,45 +455,75 @@ When a device is controlled:
 }
 ```
 
-## 10. Project structure
+
+# 📁 Project Structure
 
 ```text
 eco-meter/
-├── config/
-│   ├── db.js
-│   └── firebase.js
-├── controllers/
-│   ├── alertController.js
-│   ├── authController.js
-│   ├── billController.js
-│   ├── deviceController.js
-│   ├── notificationController.js
-│   ├── readingController.js
-│   └── tipController.js
-├── middleware/
-│   ├── authMiddleware.js
-│   └── validate.js
-├── models/
-│   ├── Alert.js
-│   ├── Device.js
-│   ├── Reading.js
-│   ├── Tip.js
-│   └── User.js
-├── routes/
-│   ├── alertRoutes.js
-│   ├── authRoutes.js
-│   ├── billRoutes.js
-│   ├── deviceRoutes.js
-│   ├── notificationRoutes.js
-│   ├── readingRoutes.js
-│   └── tipRoutes.js
-├── .env.example
+│
+├── backend/
+│   │
+│   ├── config/
+│   │   ├── db.js
+│   │   └── firebase.js
+│   │
+│   ├── controllers/
+│   │   ├── alertController.js
+│   │   ├── authController.js
+│   │   ├── billController.js
+│   │   ├── deviceController.js
+│   │   ├── notificationController.js
+│   │   ├── readingController.js
+│   │   └── tipController.js
+│   │
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   └── validate.js
+│   │
+│   ├── models/
+│   │   ├── Alert.js
+│   │   ├── Device.js
+│   │   ├── Reading.js
+│   │   ├── Tip.js
+│   │   └── User.js
+│   │
+│   ├── routes/
+│   │   ├── alertRoutes.js
+│   │   ├── authRoutes.js
+│   │   ├── billRoutes.js
+│   │   ├── deviceRoutes.js
+│   │   ├── notificationRoutes.js
+│   │   ├── readingRoutes.js
+│   │   └── tipRoutes.js
+│   │
+│   ├── package.json
+│   ├── server.js
+│   └── .env
+│
+├── frontend/
+│   │
+│   ├── public/
+│   │   ├── _redirects
+│   │   └── firebase-messaging-sw.js
+│   │
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── api.js
+│   │   ├── firebase.js
+│   │   ├── messaging.js
+│   │   ├── socket.js
+│   │   ├── index.css
+│   │   └── main.jsx
+│   │
+│   ├── package.json
+│   ├── index.html
+│   ├── netlify.toml
+│   └── .env
+│
 ├── .gitignore
-├── package.json
-├── postman_collection.json
-├── README.md
-└── server.js
-```
+└── README.md
+
+
 
 ## 11. Deployment on Render
 
